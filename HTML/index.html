@@ -1,0 +1,28 @@
+<!doctype html>
+<html>
+<head>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.9.0/p5.js"></script>
+<script src="https://unpkg.com/qrcode-generator@1.4.4/qrcode.js"></script>
+<script src="../JS/p5.js"></script>
+
+
+</head>
+<body>
+
+  <div>
+    <input id="urlInput" type="text" placeholder="Enter URL">
+    <button onclick="generateQR('url')">Generate URL QR Code</button>
+  </div><br><br>
+
+  <div>
+    <input id="textInput" type="text" placeholder="Enter Text">
+    <button onclick="generateQR('text')">Generate Text QR Code</button>
+  </div><br><br>
+
+  <div>
+    <input id="fileInput" type="file" accept="image/*,video/*">
+    <button onclick="generateQR('file')">Generate File QR Code</button>
+  </div>
+
+</body>
+</html>

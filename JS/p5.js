@@ -1,9 +1,3 @@
-<!doctype html>
-<html>
-<head>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.9.0/p5.js"></script>
-<script src="https://unpkg.com/qrcode-generator@1.4.4/qrcode.js"></script>
-<script>
 
 var opts = {
   width: 400,
@@ -32,6 +26,7 @@ function generateQRCode(data) {
   }
 }
 
+// dit is de functie die wordt gebruikt om het canvas te initialiseren en de eerste qr-code te genereren.
 function setup() {
   createCanvas(opts.width, opts.height);
   frameRate(opts.fps);
@@ -39,9 +34,10 @@ function setup() {
   fill(opts.bg);
   rect(0, 0, opts.width,opts.height);
   // Generate initial QR with empty data
-  generateQRCode('');
+//   generateQRCode('');
 }
 
+// dit is de functie die wordt gebruikt om de animatie van de qr-code te tekenen.
 function draw() {
 
   if (particles && ticks < 0) {
@@ -81,14 +77,33 @@ function draw() {
   }
 }
 
-function generateQR() {
-  var url = document.getElementById('urlInput').value;
-  generateQRCode(url);
+ // Dit zijn de functies die worden gebruikt om qr-codes te genereren.
+function generateQR(type) {
+  if (type === 'url') {
+    var val = document.getElementById('urlInput').value.trim();
+    if (val === '') {
+      alert('Please enter a URL to generate a QR code.');
+      return;
+    }
+    generateQRCode(val);
+  } else if (type === 'text') {
+    var val = document.getElementById('textInput').value.trim();
+    if (val === '') {
+      alert('Please enter some text to generate a QR code.');
+      return;
+    }
+    generateQRCode(val);
+  } else if (type === 'file') {
+    var fileElem = document.getElementById('fileInput');
+    if (fileElem.files.length === 0) {
+      alert('Please select a file first.');
+      return;
+    }
+    var file = fileElem.files[0];
+    var reader = new FileReader();
+    reader.onload = function(e) {
+      generateQRCode(e.target.result);
+    };
+    reader.readAsDataURL(file);
+  }
 }
-</script>
-</head>
-<body>
-<input id="urlInput" type="text" placeholder="Enter URL">
-<button onclick="generateQR()">Generate QR Code</button>
-</body>
-</html>
