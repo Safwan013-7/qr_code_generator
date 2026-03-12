@@ -4,11 +4,11 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.9.0/p5.js"></script>
 <script src="https://unpkg.com/qrcode-generator@1.4.4/qrcode.js"></script>
 <script src="../JS/p5.js"></script>
-
+<link rel="stylesheet" href="../CSS/style.css">
 
 </head>
 <body>
-
+<div class="container">
   <div>
     <input id="urlInput" type="text" placeholder="Enter URL">
     <button onclick="generateQR('url')">Generate URL QR Code</button>
@@ -23,6 +23,9 @@
     <input id="fileInput" type="file" accept="image/*,video/*">
     <button onclick="generateQR('file')">Generate File QR Code</button>
   </div>
+</div>
 
+<!-- holder for the generated p5 canvas; will appear below the controls -->
+<div id="canvas-holder"></div>
 </body>
 </html>

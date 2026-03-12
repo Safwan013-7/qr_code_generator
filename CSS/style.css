@@ -1,0 +1,18 @@
+.container{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    height: 300px;
+    width: 1000px;
+    background-color: rgb(240, 248, 255);
+     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+     margin: 0 auto;
+     margin-top: 50px;
+}
+
+#canvas-holder {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}

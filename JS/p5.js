@@ -1,14 +1,17 @@
-
+// variabelen die worden gebruikt om de instellingen van het canvas en de animatie bij te houden.
 var opts = {
   width: 400,
   height: 400,
-  bg: 'rgba(0,0,0,0.01)',
+  bg: 'rgb(240, 248, 255);',
   fps: 30,
-  cellSize: 4
+  cellSize: 4,
+  margin: 0
 };
 var ticks = 0;
 var particles = null;
 
+
+// functie die een qr-code genereert op basis van de gegeven data en de deeltjes aanmaakt voor de animatie.
 function generateQRCode(data) {
   var qr = qrcode(0, 'L');
   qr.addData(data);
@@ -28,7 +31,8 @@ function generateQRCode(data) {
 
 // dit is de functie die wordt gebruikt om het canvas te initialiseren en de eerste qr-code te genereren.
 function setup() {
-  createCanvas(opts.width, opts.height);
+  const cnv = createCanvas(opts.width, opts.height);
+  cnv.parent('canvas-holder');          // put the canvas under .container
   frameRate(opts.fps);
   noStroke();
   fill(opts.bg);
@@ -82,21 +86,21 @@ function generateQR(type) {
   if (type === 'url') {
     var val = document.getElementById('urlInput').value.trim();
     if (val === '') {
-      alert('Please enter a URL to generate a QR code.');
+      alert('Typ een URL in om een QR-code te genereren.');
       return;
     }
     generateQRCode(val);
   } else if (type === 'text') {
     var val = document.getElementById('textInput').value.trim();
     if (val === '') {
-      alert('Please enter some text to generate a QR code.');
+      alert('Typ wat tekst in om een QR-code te genereren.');
       return;
     }
     generateQRCode(val);
   } else if (type === 'file') {
     var fileElem = document.getElementById('fileInput');
     if (fileElem.files.length === 0) {
-      alert('Please select a file first.');
+      alert('Selecteer eerst een bestand.');
       return;
     }
     var file = fileElem.files[0];
