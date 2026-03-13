@@ -115,18 +115,5 @@ function generateQR(type) {
     reader.readAsDataURL(file);
   }
   }
-  document.getElementById('downloadBtn').addEventListener('click', function() {
-   const link = document.createElement('a');
 
-  link.href= 'data:image/png;base64,' + btoa(document.getElementsByTagName('canvas')[0].toDataURL().split(',')[1]);
-
-  link.download = 'qr_code.png';
-
-  link.style.display = 'none';
-
-  document.body.appendChild(link);
-
-  link.click();
-
-  document.body.removeChild(link);
-   } );
+   

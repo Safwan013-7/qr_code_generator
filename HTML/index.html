@@ -1,34 +1,50 @@
-<!doctype html>
-<html>
-<head>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.9.0/p5.js"></script>
-<script src="https://unpkg.com/qrcode-generator@1.4.4/qrcode.js"></script>
-<script src="../JS/p5.js"></script>
-<link rel="stylesheet" href="../CSS/style.css">
+  <!doctype html>
+  <html>
+  <head>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.9.0/p5.js"></script>
+  <script src="https://unpkg.com/qrcode-generator@1.4.4/qrcode.js"></script>
+  <script src="../JS/p5.js"></script>
+  <link rel="stylesheet" href="../CSS/style.css">
 
-</head>
-<body>
-<div class="container">
-  <div>
-    <input id="urlInput" type="text" placeholder="Enter URL">
-    <button onclick="generateQR('url')">Generate QR Code</button>
-  </div><br><br>
+  </head>
+  <body>
+  <div class="container">
+    <div>
+      <input id="urlInput" type="text" placeholder="Enter URL">
+      <button onclick="generateQR('url')">Generate QR Code</button>
+    </div><br><br>
 
-  <div>
-    <input id="textInput" type="text" placeholder="Enter Text">
-    <button onclick="generateQR('text')">Generate QR Code</button>
-  </div><br><br>
+    <div>
+      <input id="textInput" type="text" placeholder="Enter Text">
+      <button onclick="generateQR('text')">Generate QR Code</button>
+    </div><br><br>
 
-  <div>
-    <input id="fileInput" type="file" accept="image/*, video/*">
-    <button onclick="generateQR('file')">Generate QR Code</button>
+    <div>
+      <input id="fileInput" type="file" accept="image/*, video/*">
+      <button onclick="generateQR('file')">Generate QR Code</button>
+    </div>
+
+    <div id="canvas-holder"></div>
+    <button id="download-btn">Download QR Code</button>
   </div>
 
-  <div id="canvas-holder"></div>
-  <button id="downloadBtn">Download QR Code</button>
-</div>
+  <script>
+    // deze code is verantwoordelijk voor het downloaden van de gegenereerde qr-code als een png-bestand wanneer de gebruiker op de downloadknop klikt.
+  document.getElementById('download-btn').addEventListener('click', function() {
+   const link = document.createElement('a');
 
-<!-- holder for the generated p5 canvas; will appear below the controls -->
+  link.href= 'data:image/jpg;base64,' + canvas.toDataURL().split(',')[1];
+// deze regel stelt de downloadnaam van het bestand in op 'qr_code.png', zodat wanneer de gebruiker op de link klikt, het bestand automatisch wordt gedownload met deze naam.
+  link.download = 'qr_code.jpg';
+// deze regel verbergt de link door de display-stijl in te stellen op 'none', zodat deze niet zichtbaar is voor de gebruiker, maar nog steeds functioneel is wanneer erop wordt geklikt.
+  link.style.display = 'none';
 
-</body>
-</html>
+  document.body.appendChild(link);
+
+  link.click();
+
+  document.body.removeChild(link);
+   });
+  </script>
+  </body>
+  </html>
