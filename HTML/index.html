@@ -11,21 +11,24 @@
 <div class="container">
   <div>
     <input id="urlInput" type="text" placeholder="Enter URL">
-    <button onclick="generateQR('url')">Generate URL QR Code</button>
+    <button onclick="generateQR('url')">Generate QR Code</button>
   </div><br><br>
 
   <div>
     <input id="textInput" type="text" placeholder="Enter Text">
-    <button onclick="generateQR('text')">Generate Text QR Code</button>
+    <button onclick="generateQR('text')">Generate QR Code</button>
   </div><br><br>
 
   <div>
-    <input id="fileInput" type="file" accept="image/*,video/*">
-    <button onclick="generateQR('file')">Generate File QR Code</button>
+    <input id="fileInput" type="file" accept="image/*, video/*">
+    <button onclick="generateQR('file')">Generate QR Code</button>
   </div>
+
+  <div id="canvas-holder"></div>
+  <button id="downloadBtn">Download QR Code</button>
 </div>
 
 <!-- holder for the generated p5 canvas; will appear below the controls -->
-<div id="canvas-holder"></div>
+
 </body>
 </html>

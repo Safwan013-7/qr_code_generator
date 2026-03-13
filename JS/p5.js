@@ -5,7 +5,6 @@ var opts = {
   bg: 'rgb(240, 248, 255);',
   fps: 30,
   cellSize: 4,
-  margin: 0
 };
 var ticks = 0;
 var particles = null;
@@ -32,12 +31,12 @@ function generateQRCode(data) {
 // dit is de functie die wordt gebruikt om het canvas te initialiseren en de eerste qr-code te genereren.
 function setup() {
   const cnv = createCanvas(opts.width, opts.height);
-  cnv.parent('canvas-holder');          // put the canvas under .container
+  cnv.parent('canvas-holder');          // hiermee wordt het canvas aan de juiste div in de HTML gekoppeld
   frameRate(opts.fps);
   noStroke();
   fill(opts.bg);
   rect(0, 0, opts.width,opts.height);
-  // Generate initial QR with empty data
+  // Genereer een lege QR-code bij het opstarten, zodat er meteen een canvas is om op te tekenen. De gebruiker kan later een QR-code genereren door de invoervelden te gebruiken.
 //   generateQRCode('');
 }
 
@@ -56,6 +55,7 @@ function draw() {
     fill(opts.bg);
     rect(0, 0, opts.width,opts.height);
 
+    // met deze code worden de deeltjes getekend die de qr-code vormen. De deeltjes bewegen zich in een spiraalvormige beweging naar hun uiteindelijke positie toe, waarbij ze groter worden en van kleur veranderen naarmate ze dichter bij hun doel komen.
     var qrSize = opts.cellSize * particles.moduleCount;
     for (var i = 0; i < particles.length; i += 1) {
       var p = particles[i];
@@ -81,7 +81,9 @@ function draw() {
   }
 }
 
- // Dit zijn de functies die worden gebruikt om qr-codes te genereren.
+ // Deze functie wordt aangeroepen als iemand een qr code probeert te genereren zonder dat ze iets hebben ingevoerd in de url of tekst velden, 
+ // of als ze proberen een qr code te genereren zonder een bestand te selecteren. 
+ // In dat geval krijgen ze een alert te zien die hen vraagt om eerst iets in te voeren of een bestand te selecteren voordat ze een qr code kunnen genereren.
 function generateQR(type) {
   if (type === 'url') {
     var val = document.getElementById('urlInput').value.trim();
@@ -91,12 +93,14 @@ function generateQR(type) {
     }
     generateQRCode(val);
   } else if (type === 'text') {
+
     var val = document.getElementById('textInput').value.trim();
     if (val === '') {
       alert('Typ wat tekst in om een QR-code te genereren.');
       return;
     }
     generateQRCode(val);
+
   } else if (type === 'file') {
     var fileElem = document.getElementById('fileInput');
     if (fileElem.files.length === 0) {
@@ -110,4 +114,19 @@ function generateQR(type) {
     };
     reader.readAsDataURL(file);
   }
-}
+  }
+  document.getElementById('downloadBtn').addEventListener('click', function() {
+   const link = document.createElement('a');
+
+  link.href= 'data:image/png;base64,' + btoa(document.getElementsByTagName('canvas')[0].toDataURL().split(',')[1]);
+
+  link.download = 'qr_code.png';
+
+  link.style.display = 'none';
+
+  document.body.appendChild(link);
+
+  link.click();
+
+  document.body.removeChild(link);
+   } );
