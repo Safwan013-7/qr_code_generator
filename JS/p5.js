@@ -84,6 +84,7 @@ function draw() {
  // Deze functie wordt aangeroepen als iemand een qr code probeert te genereren zonder dat ze iets hebben ingevoerd in de url of tekst velden, 
  // of als ze proberen een qr code te genereren zonder een bestand te selecteren. 
  // In dat geval krijgen ze een alert te zien die hen vraagt om eerst iets in te voeren of een bestand te selecteren voordat ze een qr code kunnen genereren.
+var lastTempPage = null;
 function generateQR(type) {
   if (type === 'url') {
     var val = document.getElementById('urlInput').value.trim();
@@ -93,14 +94,12 @@ function generateQR(type) {
     }
     generateQRCode(val);
   } else if (type === 'text') {
-
     var val = document.getElementById('textInput').value.trim();
     if (val === '') {
       alert('Typ wat tekst in om een QR-code te genereren.');
       return;
     }
     generateQRCode(val);
-
   } else if (type === 'file') {
     var fileElem = document.getElementById('fileInput');
     if (fileElem.files.length === 0) {
@@ -109,11 +108,70 @@ function generateQR(type) {
     }
     var file = fileElem.files[0];
     var reader = new FileReader();
+
     reader.onload = function(e) {
-      generateQRCode(e.target.result);
+      var fileDataUrl = e.target.result;
+      // Limit file size so the QR stays scannable.
+      if (fileDataUrl.length > 12000) {
+        alert('Bestand te groot voor QR-code. Gebruik een kleiner bestand.');
+        return;
+      }
+
+      var safeName = file.name.replace(/[^a-zA-Z0-9\-_\.]/g, '_');
+      var pageHtml = '<!doctype html><html><head><meta charset="utf-8"><title>Download file</title></head><body style="font-family:Arial,sans-serif;background:#f7f8ff;margin:0;display:flex;align-items:center;justify-content:center;height:100vh;"><div style="background:#fff;border:1px solid #dce3f5;border-radius:10px;padding:18px;width:min(420px,90vw);text-align:center;box-shadow:0 8px 24px rgba(0,0,0,0.12);"><h2 style="margin-top:0;color:#1a234f;">Download je bestand</h2><p style="color:#475176;margin:.4rem 0 .8rem;">Bestandsnaam: ' + safeName + '</p><a style="display:inline-block;padding:10px 16px;background:#1f4fe0;color:#fff;border-radius:8px;text-decoration:none;font-weight:600;" href="' + fileDataUrl + '" download="' + safeName + '">Download bestand</a></div></body></html>';
+      var pageDataUrl = 'data:text/html;charset=utf-8,' + encodeURIComponent(pageHtml);
+      generateQRCode(pageDataUrl);
     };
+
     reader.readAsDataURL(file);
   }
-  }
+}
+
+// Tab switching functionality
+    function switchTab(tabName) {
+      const tabs = document.querySelectorAll('.tab-content');
+      const buttons = document.querySelectorAll('.tab-btn');
+      
+      tabs.forEach(tab => tab.classList.remove('active'));
+      buttons.forEach(btn => btn.classList.remove('active'));
+      
+      document.getElementById(tabName + '-tab').classList.add('active');
+      event.target.classList.add('active');
+    }
+
+    // File input label update
+    const fileInput = document.getElementById('fileInput');
+    const fileLabel = document.querySelector('.file-label');
+    
+    if (fileInput) {
+      fileInput.addEventListener('change', function() {
+        if (this.files && this.files[0]) {
+          fileLabel.textContent = this.files[0].name;
+          document.querySelector('.file-input-wrapper').classList.add('active');
+        }
+      });
+
+      fileInput.addEventListener('dragover', function(e) {
+        e.preventDefault();
+        document.querySelector('.file-input-wrapper').style.borderColor = '#667eea';
+      });
+
+      fileInput.addEventListener('dragleave', function() {
+        document.querySelector('.file-input-wrapper').style.borderColor = '#e0e0e0';
+      });
+    }
+
+    // Download functionality
+    document.getElementById('download-btn').addEventListener('click', function() {
+      const canvas = document.querySelector('#canvas-holder canvas');
+      if (!canvas) {
+        alert('Genereer eerst een QR-code.');
+        return;
+      }
+      const link = document.createElement('a');
+      link.href = canvas.toDataURL('image/png');
+      link.download = 'qr_code.png';
+      link.click();
+    });
 
    
