@@ -101,29 +101,30 @@ function generateQR(type) {
     }
     generateQRCode(val);
   } else if (type === 'file') {
-    var fileElem = document.getElementById('fileInput');
-    if (fileElem.files.length === 0) {
+    var fileElem = document.getElementById('file-input');
+    if (!fileElem || fileElem.files.length === 0) {
       alert('Selecteer eerst een bestand.');
       return;
     }
     var file = fileElem.files[0];
-    var reader = new FileReader();
+    var fileURL = URL.createObjectURL(file);
+    var safeName = file.name.replace(/[^a-zA-Z0-9\-_\.]/g, '_');
+    var isVideo = file.type.startsWith('video/');
+    var previewMarkup = isVideo
+      ? '<video controls style="max-width:100%;height:auto;border-radius:12px;box-shadow:0 18px 40px rgba(31,79,224,.18);"><source src="' + fileURL + '" type="' + file.type + '">Je browser ondersteunt dit videoformaat niet.</video>'
+      : '<img src="' + fileURL + '" alt="' + safeName + '" style="max-width:100%;height:auto;border-radius:12px;box-shadow:0 18px 40px rgba(31,79,224,.18);" />';
 
-    reader.onload = function(e) {
-      var fileDataUrl = e.target.result;
-      // Limit file size so the QR stays scannable.
-      if (fileDataUrl.length > 12000) {
-        alert('Bestand te groot voor QR-code. Gebruik een kleiner bestand.');
-        return;
-      }
-
-      var safeName = file.name.replace(/[^a-zA-Z0-9\-_\.]/g, '_');
-      var pageHtml = '<!doctype html><html><head><meta charset="utf-8"><title>Download file</title></head><body style="font-family:Arial,sans-serif;background:#f7f8ff;margin:0;display:flex;align-items:center;justify-content:center;height:100vh;"><div style="background:#fff;border:1px solid #dce3f5;border-radius:10px;padding:18px;width:min(420px,90vw);text-align:center;box-shadow:0 8px 24px rgba(0,0,0,0.12);"><h2 style="margin-top:0;color:#1a234f;">Download je bestand</h2><p style="color:#475176;margin:.4rem 0 .8rem;">Bestandsnaam: ' + safeName + '</p><a style="display:inline-block;padding:10px 16px;background:#1f4fe0;color:#fff;border-radius:8px;text-decoration:none;font-weight:600;" href="' + fileDataUrl + '" download="' + safeName + '">Download bestand</a></div></body></html>';
-      var pageDataUrl = 'data:text/html;charset=utf-8,' + encodeURIComponent(pageHtml);
-      generateQRCode(pageDataUrl);
-    };
-
-    reader.readAsDataURL(file);
+    var pageHtml = '<!doctype html><html><head><meta charset="utf-8"><title>Bestand bekijken en downloaden</title><meta name="viewport" content="width=device-width, initial-scale=1.0"></head><body style="font-family:Arial,sans-serif;background:#f7f8ff;margin:0;padding:24px;display:flex;align-items:center;justify-content:center;min-height:100vh;"><div style="background:#fff;border:1px solid #dce3f5;border-radius:14px;padding:24px;max-width:720px;width:100%;box-shadow:0 24px 60px rgba(0,0,0,0.12);text-align:center;"><h1 style="margin-top:0;color:#1a234f;font-size:1.6rem;">Bekijk en download je bestand</h1><p style="margin:.4rem 0 1.2rem;color:#475176;">Bestandsnaam: ' + safeName + '</p>' + previewMarkup + '<p style="margin:20px 0 0;color:#667488;">Klik op de knop om het bestand te downloaden.</p><a style="display:inline-block;margin-top:18px;padding:12px 18px;background:#1f4fe0;color:#fff;border-radius:10px;text-decoration:none;font-weight:600;" href="' + fileURL + '" download="' + safeName + '">Download bestand</a></div></body></html>';
+    var pageDataUrl = 'data:text/html;charset=utf-8,' + encodeURIComponent(pageHtml);
+    lastTempPage = pageDataUrl;
+    var previewLink = document.getElementById('preview-link');
+    var previewContainer = document.getElementById('preview-link-container');
+    if (previewLink && previewContainer) {
+      previewLink.href = pageDataUrl;
+      previewLink.textContent = 'Open tijdelijke pagina';
+      previewContainer.style.display = 'block';
+    }
+    generateQRCode(pageDataUrl);
   }
 }
 
@@ -140,7 +141,7 @@ function generateQR(type) {
     }
 
     // File input label update
-    const fileInput = document.getElementById('fileInput');
+    const fileInput = document.getElementById('file-input');
     const fileLabel = document.querySelector('.file-label');
     
     if (fileInput) {
@@ -158,6 +159,13 @@ function generateQR(type) {
 
       fileInput.addEventListener('dragleave', function() {
         document.querySelector('.file-input-wrapper').style.borderColor = '#e0e0e0';
+      });
+    }
+
+    var generateFileButton = document.getElementById('generate-file-qr');
+    if (generateFileButton) {
+      generateFileButton.addEventListener('click', function () {
+        generateQR('file');
       });
     }
 
